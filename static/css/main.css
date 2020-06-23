@@ -1,0 +1,13 @@
+.container {
+    width: 400px;
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+    float: left;
+    display: inline-block
+}
+
+.tb-tag {
+    display:inline-block;
+    margin-left:10px;
+    width: 1060px
+}
