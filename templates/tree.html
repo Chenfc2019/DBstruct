@@ -39,6 +39,7 @@
 
 <script type="text/javascript">
     var jsObj= eval('{{retValue|safe }}');
+    var retData; //返回的表格数据
     console.log('--jsObj--',jsObj);
     layui.extend({
     dtree: '{/}/static/layui_ext/dtree/dtree'
@@ -53,14 +54,16 @@
     });
 
     var tbname;
+    var dbname;
 
     dtree.on("node(demoTree)", function(obj){
         layer.msg(JSON.stringify(obj.param));
+        dbname = obj.param.parentId;
         tbname = obj.param.context;
         console.log('--tbname--',tbname);
         //请求后台表格的数据
         var data= {
-            data: JSON.stringify({'tbname': tbname }),
+            data: JSON.stringify({'tbname': tbname,'dbname':dbname }),
 		}
 		$.ajax({
 			url:"{{ url_for('getTBdata') }}",
@@ -69,7 +72,21 @@
 			dataType: 'json',
 			success:function(data) {
 				//成功后的一些操作
-                console.log(data);
+                console.log('--retData--',data);
+                retData = data.tb_data;
+                var myCols=new Array();
+                myCols[0] = data.tb_head;
+
+                layui.use('table', function(){
+                  var table = layui.table;
+
+                  table.render({
+                    elem: '#test'
+                    ,data: retData
+                    ,cols: myCols
+                    ,page: true
+                  });
+                });
 			},
 			error:function(e){
 				alert("操作失败");
@@ -79,26 +96,7 @@
     })
   });
 
-    layui.use('table', function(){
-  var table = layui.table;
 
-  table.render({
-    elem: '#test'
-    ,url:'/static/js/demo.json'
-    ,cols: [[
-      {field:'id', width:80, title: 'ID', sort: true}
-      ,{field:'username', width:80, title: '用户名'}
-      ,{field:'sex', width:80, title: '性别', sort: true}
-      ,{field:'city', width:80, title: '城市'}
-      ,{field:'sign', title: '签名', minWidth: 150}
-      ,{field:'experience', width:80, title: '积分', sort: true}
-      ,{field:'score', width:80, title: '评分', sort: true}
-      ,{field:'classify', width:80, title: '职业'}
-      ,{field:'wealth', width:135, title: '财富', sort: true}
-    ]]
-    ,page: true
-  });
-});
 
 
 </script>
